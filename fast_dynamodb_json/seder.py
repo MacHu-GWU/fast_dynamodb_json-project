@@ -3,6 +3,12 @@
 import typing as T
 import polars as pl
 
+from .typehint import (
+    T_ITEM,
+    T_JSON,
+    T_SIMPLE_SCHEMA,
+    T_POLARS_SCHEMA,
+)
 from .schema import (
     DATA_TYPE,
     Integer,
@@ -193,18 +199,45 @@ def to_expr(
         return final_expr
 
 
-def deserialize(
+def deserialize_df(
     df: pl.DataFrame,
-    schema: T.Dict[str, T.Any],
+    simple_schema: T_SIMPLE_SCHEMA,
+    dynamodb_json_col: str = "Item",
 ) -> pl.DataFrame:
     exprs = []
-    for name, t in schema.items():
-        expr = to_expr(name, t, start=pl.col("Item").struct.field(name))
+    for name, t in simple_schema.items():
+        expr = to_expr(name, t, start=pl.col(dynamodb_json_col).struct.field(name))
         if expr is not None:
             exprs.append(expr)
-    # --- for debug only
-    # print("=" * 80)
-    # for ith, expr in enumerate(exprs, start=1):
-    #     print(f"--- {ith} ---")
-    #     print(expr)
-    return df.with_columns(*exprs).drop("Item")
+    return df.with_columns(*exprs).drop(dynamodb_json_col)
+
+
+def deserialize(
+    records: T.Iterable[T_ITEM],
+    simple_schema: T_SIMPLE_SCHEMA,
+) -> T.List[T_JSON]:
+    """
+    Convert regular Python dict data to DynamoDB json dict.
+    """
+    tmp_col = "Json"
+    df = pl.DataFrame([{tmp_col: record} for record in records], strict=False)
+    df = deserialize_df(df=df, simple_schema=simple_schema, dynamodb_json_col=tmp_col)
+    return df.to_dicts()
+
+
+# def deserialize(
+#     df: pl.DataFrame,
+#     schema: T.Dict[str, T.Any],
+#     item_col: str = "Item",
+# ) -> pl.DataFrame:
+#     exprs = []
+#     for name, t in schema.items():
+#         expr = to_expr(name, t, start=pl.col(item_col).struct.field(name))
+#         if expr is not None:
+#             exprs.append(expr)
+#     # --- for debug only
+#     # print("=" * 80)
+#     # for ith, expr in enumerate(exprs, start=1):
+#     #     print(f"--- {ith} ---")
+#     #     print(expr)
+#     return df.with_columns(*exprs).drop(item_col)
