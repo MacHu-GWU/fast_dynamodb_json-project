@@ -5,6 +5,10 @@ from fast_dynamodb_json import api
 
 def test():
     _ = api
+    _ = api.T_ITEM
+    _ = api.T_JSON
+    _ = api.T_SIMPLE_SCHEMA
+    _ = api.T_POLARS_SCHEMA
     _ = api.DATA_TYPE
     _ = api.Integer
     _ = api.Float
@@ -15,10 +19,10 @@ def test():
     _ = api.Set
     _ = api.List
     _ = api.Struct
-    _ = api.T_ITEM
-    _ = api.T_JSON
-    _ = api.T_SIMPLE_SCHEMA
-    _ = api.T_POLARS_SCHEMA
+    _ = api.deserialize
+    _ = api.deserialize_df
+    _ = api.serialize
+    _ = api.serialize_df
 
 
 if __name__ == "__main__":

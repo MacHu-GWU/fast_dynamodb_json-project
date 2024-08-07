@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
+"""
+A simple schema definition system for DynamoDB item.
+"""
+
 import typing as T
 import dataclasses
 
 import polars as pl
 
 from .sentinel import NOTHING
-
-if T.TYPE_CHECKING:  # pragma: no cover
-    from .typehint import T_SIMPLE_SCHEMA, T_POLARS_SCHEMA
 
 
 @dataclasses.dataclass
@@ -34,6 +35,10 @@ DATA_TYPE = T.TypeVar("DATA_TYPE", bound=BaseType)
 
 @dataclasses.dataclass
 class Integer(BaseType):
+    """
+    :param default_for_null: The default value for null for serialization.
+    """
+
     default_for_null: T.Any = dataclasses.field(default=NOTHING)
 
     def to_polars(self) -> pl.Int64:
@@ -45,6 +50,10 @@ class Integer(BaseType):
 
 @dataclasses.dataclass
 class Float(BaseType):
+    """
+    :param default_for_null: The default value for null for serialization
+    """
+
     default_for_null: T.Any = dataclasses.field(default=NOTHING)
 
     def to_polars(self) -> pl.Float64:
@@ -60,6 +69,10 @@ DEFAULT_NULL_BINARY = b""
 
 @dataclasses.dataclass
 class String(BaseType):
+    """
+    :param default_for_null: The default value for null for serialization.
+    """
+
     default_for_null: T.Any = dataclasses.field(default=DEFAULT_NULL_STRING)
 
     def to_polars(self) -> pl.Utf8:
@@ -71,6 +84,10 @@ class String(BaseType):
 
 @dataclasses.dataclass
 class Binary(BaseType):
+    """
+    :param default_for_null: The default value for null for serialization.
+    """
+
     default_for_null: T.Any = dataclasses.field(default=DEFAULT_NULL_BINARY)
 
     def to_polars(self) -> pl.Binary:
@@ -82,6 +99,10 @@ class Binary(BaseType):
 
 @dataclasses.dataclass
 class Bool(BaseType):
+    """
+    :param default_for_null: The default value for null for serialization
+    """
+
     default_for_null: T.Any = dataclasses.field(default=NOTHING)
 
     def to_polars(self) -> pl.Boolean:
@@ -93,6 +114,10 @@ class Bool(BaseType):
 
 @dataclasses.dataclass
 class Null(BaseType):
+    """
+    :param default_for_null: The default value for null for serialization
+    """
+
     default_for_null: T.Any = dataclasses.field(default=None)
 
     def to_polars(self) -> pl.Null:
@@ -105,6 +130,14 @@ class Null(BaseType):
 @dataclasses.dataclass
 class Set(BaseType):
     """
+    Example::
+
+        record = {"tags": ["a", "b", "c"]}
+
+        schema = Struct({
+            "tags": Set(String())
+        })
+
     :param itype: The type of the elements in the set.
     """
 
@@ -135,6 +168,14 @@ class Set(BaseType):
 @dataclasses.dataclass
 class List(BaseType):
     """
+    Example::
+
+        record = {"tags": ["a", "b", "c"]}
+
+        schema = Struct({
+            "tags": List(String())
+        })
+
     :param itype: The type of the elements in the list.
     """
 
@@ -142,7 +183,7 @@ class List(BaseType):
     default_for_null: T.Any = dataclasses.field(default_factory=list)
 
     def __post_init__(self):
-        if self.itype is NOTHING:
+        if self.itype is NOTHING:  # pragma: no cover
             raise ValueError("itype is required for List")
 
     def to_polars(self) -> pl.List:
@@ -155,13 +196,29 @@ class List(BaseType):
 @dataclasses.dataclass
 class Struct(BaseType):
     """
+    Example:
+
+        record = {
+            "details": {
+                "name": "Alice",
+                "age": 30,
+            }
+        }
+
+        schema = Struct({
+            "details": Struct({
+                "name": String(),
+                "age": Integer(),
+            })
+        }),
+
     :param types: The types of the fields in the struct.
     """
 
     types: T.Dict[str, BaseType] = dataclasses.field(default=NOTHING)
 
     def __post_init__(self):
-        if self.types is NOTHING:
+        if self.types is NOTHING:  # pragma: no cover
             raise ValueError("types is required for Struct")
 
     def to_polars(self) -> pl.Struct:

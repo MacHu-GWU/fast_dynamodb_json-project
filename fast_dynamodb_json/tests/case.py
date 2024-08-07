@@ -40,7 +40,13 @@ class Case:
     simple_schema: T_SIMPLE_SCHEMA = dataclasses.field(default_factory=dict)
     polars_schema: T_POLARS_SCHEMA = dataclasses.field(default_factory=dict)
 
-    def compare(self, expected, result, write_to_file=True):
+    def compare(
+        self,
+        expected,
+        result,
+        verbose: bool = False,
+        write_to_file: bool = True,
+    ):
         if write_to_file:
             try:
                 path_expected_json.write_text(
@@ -53,14 +59,17 @@ class Case:
                 path_expected_json.write_text(jsonpickle.dumps(expected, indent=4))
                 path_result_json.write_text(jsonpickle.dumps(result, indent=4))
 
-        print("---------- Expected ----------")
-        rprint(expected)
-        print("---------- Result ----------")
-        rprint(result)
+        if verbose:
+            print("---------- Expected ----------")
+            rprint(expected)
+            print("---------- Result ----------")
+            rprint(result)
+
         if write_to_file:
-            print(f"expected: file://{path_expected_json}")
-            print(f"result: file://{path_result_json}")
-            print(f"diff {path_expected_json} {path_result_json}")
+            if verbose:
+                print(f"expected: file://{path_expected_json}")
+                print(f"result: file://{path_result_json}")
+                print(f"diff {path_expected_json} {path_result_json}")
 
     def test_dynamodb_json(self):
         res1 = json_util.dumps(self.item, as_dict=True)

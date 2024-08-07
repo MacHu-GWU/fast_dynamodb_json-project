@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+"""
+See :func:`serialize` and :func:`serialize_df` for more details.
+"""
+
 import typing as T
 import polars as pl
 
@@ -7,7 +11,6 @@ from .typehint import (
     T_ITEM,
     T_JSON,
     T_SIMPLE_SCHEMA,
-    T_POLARS_SCHEMA,
 )
 from .schema import (
     DATA_TYPE,
@@ -22,9 +25,6 @@ from .schema import (
     Struct,
 )
 
-if T.TYPE_CHECKING:  # pragma: no cover
-    from polars.functions.col import Col
-
 
 def get_selector(
     name: T.Optional[str],
@@ -33,6 +33,10 @@ def get_selector(
     is_set: bool = False,
     is_list: bool = False,
 ) -> T.Optional[pl.Expr]:
+    """
+    Get a polars expression for a given field that is used to serialize
+    regular Python dict into DynamoDB json data.
+    """
     # print(f"{name = }") # for debug only
     # print(f"{dtype = }") # for debug only
     # print(f"{node = }") # for debug only
@@ -150,9 +154,8 @@ def get_selector(
         if name:
             final_expr = final_expr.alias(name)
         return final_expr
-    else:
+    else: # pragma: no cover
         return None
-
     # fmt: on
 
 
@@ -161,6 +164,44 @@ def serialize_df(
     simple_schema: T_SIMPLE_SCHEMA,
     data_col: str = "Data",
 ) -> pl.DataFrame:
+    """
+    similar to :func:`serialize`, but work with polars DataFrame.
+
+    :param df: polars DataFrame with a column of DynamoDB json data. Sample dataframe::
+
+        import polars as pl
+
+        df = pl.DataFrame(
+            {
+                "Data": [
+                    {
+                        "pk": "pk1",
+                        "sk": "sk1",
+                        "a_list": ["hello", "world"],
+                        "a_dict": {
+                            "a": 1,
+                            "b": 2,
+                        },
+                    },
+                    ...
+                ],
+            },
+        )
+
+    :param simple_schema: Schema of the data.
+    :param dynamodb_json_col: Name of the column that contains regular Python dict data.
+        for example: "Data".
+
+    :return: polars DataFrame with columns of the DynamoDB JSON data. Sample dataframe::
+
+        +--------------+--------------+-----------------------------------------+-------------------------------------------+
+        |      pk      |      sk      |                  a_list                 |                   a_dict                  |
+        +--------------+--------------+-----------------------------------------+-------------------------------------------+
+        | {"S": "pk1"} | {"S": "sk1"} | {"L": [{"S": "hello"}, {"S": "world"}]} | {"M": {"a": {"N": "1"}, "b": {"N": "2"}}} |
+        +--------------+--------------+-----------------------------------------+-------------------------------------------+
+        |              |              |                                         |                                           |
+        +--------------+--------------+-----------------------------------------+-------------------------------------------+
+    """
     selectors = []
 
     for name, dtype in simple_schema.items():
@@ -182,7 +223,56 @@ def serialize(
     simple_schema: T_SIMPLE_SCHEMA,
 ) -> T.List[T_JSON]:
     """
-    Convert regular Python dict data to DynamoDB json dict.
+    Convert regular Python dict data to DynamoDB JSON dict.
+
+    :param records: List of regular Python dict data. Example::
+
+        records = [
+            {
+                "pk": "pk1",
+                "sk": "sk1",
+                "a_list": ["hello", "world"],
+                "a_dict": {
+                    "a": 1,
+                    "b": 2,
+                },
+            },
+            ...
+        ]
+
+    :param simple_schema: Schema of the data. Example::
+
+        simple_schema = {
+            "pk": String(),
+            "sk": String(),
+            "a_list": List(String()),
+            "a_dict": Struct({
+                "a": Integer(),
+                "b": Integer(),
+            }),
+        }
+
+    :return: List of DynamoDB JSON data. Example::
+
+        result = [
+            {
+                "pk": {"S": "pk1"},
+                "sk": {"S": "sk1"},
+                "a_list" {
+                    "L": [
+                        {"S": "hello"},
+                        {"S": "world"},
+                    ],
+                },
+                "a_dict": {
+                    "M": {
+                        "a": {"N": "1"},
+                        "b": {"N": "2"},
+                    }
+                }
+            },
+            ...
+        ]
     """
     data_col = "Data"
     polars_schema = {k: vtype.to_polars() for k, vtype in simple_schema.items()}

@@ -18,14 +18,14 @@ def test():
             "a_str": {"S": "Alice"},
         },
         simple_schema={
-            "a_int": Integer(),
-            "a_float": Float(),
-            "a_str": String(),
+            "a_int": Integer(default_for_null=-999),
+            "a_float": Float(default_for_null=-999.999),
+            "a_str": String(default_for_null="NA"),
         },
     )
     case.test_dynamodb_json()
     case.test_deserialize()
-    # case.test_serialize()
+    case.test_serialize()
 
 
 if __name__ == "__main__":

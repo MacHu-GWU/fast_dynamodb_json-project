@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+"""
+Usage example:
+
+    import fast_dynamodb_json.api as fast_dynamodb_json
+"""
 
 from .typehint import T_ITEM
 from .typehint import T_JSON
