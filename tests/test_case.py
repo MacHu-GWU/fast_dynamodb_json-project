@@ -1,14 +1,31 @@
 # -*- coding: utf-8 -*-
 
-import polars as pl
-import fast_dynamodb_json.schema as types
+from fast_dynamodb_json.schema import Integer, Float, String
 
-from fast_dynamodb_json.tests.case import CaseEnum
+from fast_dynamodb_json.tests.case import Case
 
 
 def test():
-    CaseEnum.case1.test_dynamodb_json()
-    CaseEnum.case1.test_deserialize()
+    case = Case(
+        item={
+            "a_int": 1,
+            "a_float": 3.14,
+            "a_str": "Alice",
+        },
+        json={
+            "a_int": {"N": "1"},
+            "a_float": {"N": "3.14"},
+            "a_str": {"S": "Alice"},
+        },
+        simple_schema={
+            "a_int": Integer(),
+            "a_float": Float(),
+            "a_str": String(),
+        },
+    )
+    case.test_dynamodb_json()
+    case.test_deserialize()
+    # case.test_serialize()
 
 
 if __name__ == "__main__":

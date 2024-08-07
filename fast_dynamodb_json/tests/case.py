@@ -89,18 +89,24 @@ class CaseEnum:
             "a_float": 3.14,
             "a_str": "Alice",
             "a_bin": b"hello",
+            "a_bool": False,
+            "a_null": None,
         },
         json={
             "a_int": {"N": "1"},
             "a_float": {"N": "3.14"},
             "a_str": {"S": "Alice"},
             "a_bin": {"B": "aGVsbG8="},
+            "a_bool": {"BOOL": False},
+            "a_null": {"NULL": True},
         },
         simple_schema={
             "a_int": Integer(),
             "a_float": Float(),
             "a_str": String(),
             "a_bin": Binary(),
+            "a_bool": Bool(),
+            "a_null": Null(),
         },
     )
 
@@ -110,18 +116,24 @@ class CaseEnum:
             "a_float": None,
             "a_str": None,
             "a_bin": None,
+            "a_bool": None,
+            "a_null": None,
         },
         json={
             "a_int": {"NULL": True},
             "a_float": {"NULL": True},
             "a_str": {"NULL": True},
             "a_bin": {"NULL": True},
+            "a_bool": {"NULL": True},
+            "a_null": {"NULL": True},
         },
         simple_schema={
             "a_int": Integer(),
             "a_float": Float(),
             "a_str": String(),
             "a_bin": Binary(),
+            "a_bool": Bool(),
+            "a_null": Null(),
         },
     )
 
@@ -131,18 +143,24 @@ class CaseEnum:
             "a_float": None,
             "a_str": None,
             "a_bin": None,
+            "a_bool": None,
+            "a_null": None,
         },
         json={
             "a_int": None,
             "a_float": None,
             "a_str": None,
             "a_bin": None,
+            "a_bool": None,
+            "a_null": None,
         },
         simple_schema={
             "a_int": Integer(),
             "a_float": Float(),
             "a_str": String(),
             "a_bin": Binary(),
+            "a_bool": Bool(),
+            "a_null": Null(),
         },
     )
 
@@ -152,18 +170,807 @@ class CaseEnum:
             "a_float": None,
             "a_str": None,
             "a_bin": None,
+            "a_bool": None,
+            "a_null": None,
         },
         json={
             # should have "a_int", but it is empty
             # should have "a_float", but it is empty
             # should have "a_str", but it is empty
             # should have "a_bin", but it is empty
+            # should have "a_bool", but it is empty
+            # should have "a_null", but it is empty
         },
         simple_schema={
             "a_int": Integer(),
             "a_float": Float(),
             "a_str": String(),
             "a_bin": Binary(),
+            "a_bool": Bool(),
+            "a_null": Null(),
+        },
+    )
+
+    case5 = Case(
+        item={
+            "a_int_set": [1, 2, 3],
+            "a_float_set": [1.1, 2.2, 3.3],
+            "a_str_set": ["a", "b", "c"],
+            "a_binary_set": [b"hello", b"world"],
+            "a_int_list": [1, 2, 3],
+            "a_float_list": [1.1, 2.2, 3.3],
+            "a_str_list": ["a", "b", "c"],
+            "a_binary_list": [b"hello", b"world"],
+        },
+        json={
+            "a_int_set": {"NS": ["1", "2", "3"]},
+            "a_float_set": {"NS": ["1.1", "2.2", "3.3"]},
+            "a_str_set": {"SS": ["a", "b", "c"]},
+            "a_binary_set": {"BS": ["aGVsbG8=", "d29ybGQ="]},
+            "a_int_list": {"L": [{"N": "1"}, {"N": "2"}, {"N": "3"}]},
+            "a_float_list": {"L": [{"N": "1.1"}, {"N": "2.2"}, {"N": "3.3"}]},
+            "a_str_list": {"L": [{"S": "a"}, {"S": "b"}, {"S": "c"}]},
+            "a_binary_list": {"L": [{"B": "aGVsbG8="}, {"B": "d29ybGQ="}]},
+        },
+        simple_schema={
+            "a_int_set": Set(Integer()),
+            "a_float_set": Set(Float()),
+            "a_str_set": Set(String()),
+            "a_binary_set": Set(Binary()),
+            "a_int_list": List(Integer()),
+            "a_float_list": List(Float()),
+            "a_str_list": List(String()),
+            "a_binary_list": List(Binary()),
+        },
+    )
+
+    case6 = Case(
+        item={
+            "a_int_set": None,
+            "a_float_set": None,
+            "a_str_set": None,
+            "a_binary_set": None,
+            "a_int_list": None,
+            "a_float_list": None,
+            "a_str_list": None,
+            "a_binary_list": None,
+        },
+        json={
+            "a_int_set": {"NULL": True},
+            "a_float_set": {"NULL": True},
+            "a_str_set": {"NULL": True},
+            "a_binary_set": {"NULL": True},
+            "a_int_list": {"NULL": True},
+            "a_float_list": {"NULL": True},
+            "a_str_list": {"NULL": True},
+            "a_binary_list": {"NULL": True},
+        },
+        simple_schema={
+            "a_int_set": Set(Integer()),
+            "a_float_set": Set(Float()),
+            "a_str_set": Set(String()),
+            "a_binary_set": Set(Binary()),
+            "a_int_list": List(Integer()),
+            "a_float_list": List(Float()),
+            "a_str_list": List(String()),
+            "a_binary_list": List(Binary()),
+        },
+    )
+
+    case7 = Case(
+        item={
+            "a_int_set": None,
+            "a_float_set": None,
+            "a_str_set": None,
+            "a_binary_set": None,
+            "a_int_list": None,
+            "a_float_list": None,
+            "a_str_list": None,
+            "a_binary_list": None,
+        },
+        json={
+            "a_int_set": None,
+            "a_float_set": None,
+            "a_str_set": None,
+            "a_binary_set": None,
+            "a_int_list": None,
+            "a_float_list": None,
+            "a_str_list": None,
+            "a_binary_list": None,
+        },
+        simple_schema={
+            "a_int_set": Set(Integer()),
+            "a_float_set": Set(Float()),
+            "a_str_set": Set(String()),
+            "a_binary_set": Set(Binary()),
+            "a_int_list": List(Integer()),
+            "a_float_list": List(Float()),
+            "a_str_list": List(String()),
+            "a_binary_list": List(Binary()),
+        },
+    )
+
+    case8 = Case(
+        item={
+            "a_int_set": None,
+            "a_float_set": None,
+            "a_str_set": None,
+            "a_binary_set": None,
+            "a_int_list": None,
+            "a_float_list": None,
+            "a_str_list": None,
+            "a_binary_list": None,
+        },
+        json={
+            # should have "a_int_set", but it is empty
+            # should have "a_float_set", but it is empty
+            # should have "a_str_set", but it is empty
+            # should have "a_binary_set", but it is empty
+            # should have "a_int_list", but it is empty
+            # should have "a_float_list", but it is empty
+            # should have "a_str_list", but it is empty
+            # should have "a_binary_list", but it is empty
+        },
+        simple_schema={
+            "a_int_set": Set(Integer()),
+            "a_float_set": Set(Float()),
+            "a_str_set": Set(String()),
+            "a_binary_set": Set(Binary()),
+            "a_int_list": List(Integer()),
+            "a_float_list": List(Float()),
+            "a_str_list": List(String()),
+            "a_binary_list": List(Binary()),
+        },
+    )
+
+    # empty set / list
+    case9 = Case(
+        item={
+            "a_int_set": [],
+            "a_float_set": [],
+            "a_str_set": [],
+            "a_binary_set": [],
+            "a_int_list": [],
+            "a_float_list": [],
+            "a_str_list": [],
+            "a_binary_list": [],
+        },
+        json={
+            "a_int_set": {"NS": []},
+            "a_float_set": {"NS": []},
+            "a_str_set": {"SS": []},
+            "a_binary_set": {"BS": []},
+            "a_int_list": {"L": []},
+            "a_float_list": {"L": []},
+            "a_str_list": {"L": []},
+            "a_binary_list": {"L": []},
+        },
+        simple_schema={
+            "a_int_set": Set(Integer()),
+            "a_float_set": Set(Float()),
+            "a_str_set": Set(String()),
+            "a_binary_set": Set(Binary()),
+            "a_int_list": List(Integer()),
+            "a_float_list": List(Float()),
+            "a_str_list": List(String()),
+            "a_binary_list": List(Binary()),
+        },
+    )
+
+    case10 = Case(
+        item={
+            "a_struct": {
+                "a_str": "alice",
+                "a_int": 123,
+                "a_float": 3.14,
+                "a_binary": b"hello",
+                "a_bool": False,
+                "a_null": None,
+            },
+        },
+        json={
+            "a_struct": {
+                "M": {
+                    "a_str": {"S": "alice"},
+                    "a_int": {"N": "123"},
+                    "a_float": {"N": "3.14"},
+                    "a_binary": {"B": "aGVsbG8="},
+                    "a_bool": {"BOOL": False},
+                    "a_null": {"NULL": True},
+                }
+            },
+        },
+        simple_schema={
+            "a_struct": Struct(
+                {
+                    "a_str": String(),
+                    "a_int": Integer(),
+                    "a_float": Float(),
+                    "a_binary": Binary(),
+                    "a_bool": Bool(),
+                    "a_null": Null(),
+                }
+            ),
+        },
+    )
+
+    case11 = Case(
+        item={
+            "a_list_of_struct": [
+                {"a_int": 123, "a_str": "alice"},
+                {"a_int": 456, "a_str": "bob"},
+            ],
+            "a_list_of_list_of_struct": [
+                [
+                    {"a_int": 123, "a_str": "alice"},
+                    {"a_int": 456, "a_str": "bob"},
+                ],
+                [
+                    {"a_int": 789, "a_str": "cathy"},
+                    {"a_int": 101112, "a_str": "david"},
+                ],
+            ],
+            "a_struct_of_list": {
+                "a_str_list": ["a", "b", "c"],
+                "a_int_list": [1, 2, 3],
+            },
+            "a_struct_of_struct_of_list": {
+                "struct_1": {
+                    "a_str_list1": ["a", "b", "c"],
+                    "a_int_list1": [1, 2, 3],
+                },
+                "struct_2": {
+                    "a_str_list2": ["d", "e", "f"],
+                    "a_int_list2": [4, 5, 6],
+                },
+            },
+        },
+        json={
+            "a_list_of_struct": {
+                "L": [
+                    {"M": {"a_int": {"N": "123"}, "a_str": {"S": "alice"}}},
+                    {"M": {"a_int": {"N": "456"}, "a_str": {"S": "bob"}}},
+                ]
+            },
+            "a_list_of_list_of_struct": {
+                "L": [
+                    {
+                        "L": [
+                            {"M": {"a_int": {"N": "123"}, "a_str": {"S": "alice"}}},
+                            {"M": {"a_int": {"N": "456"}, "a_str": {"S": "bob"}}},
+                        ]
+                    },
+                    {
+                        "L": [
+                            {"M": {"a_int": {"N": "789"}, "a_str": {"S": "cathy"}}},
+                            {"M": {"a_int": {"N": "101112"}, "a_str": {"S": "david"}}},
+                        ]
+                    },
+                ],
+            },
+            "a_struct_of_list": {
+                "M": {
+                    "a_str_list": {"L": [{"S": "a"}, {"S": "b"}, {"S": "c"}]},
+                    "a_int_list": {"L": [{"N": "1"}, {"N": "2"}, {"N": "3"}]},
+                }
+            },
+            "a_struct_of_struct_of_list": {
+                "M": {
+                    "struct_1": {
+                        "M": {
+                            "a_str_list1": {"L": [{"S": "a"}, {"S": "b"}, {"S": "c"}]},
+                            "a_int_list1": {"L": [{"N": "1"}, {"N": "2"}, {"N": "3"}]},
+                        }
+                    },
+                    "struct_2": {
+                        "M": {
+                            "a_str_list2": {"L": [{"S": "d"}, {"S": "e"}, {"S": "f"}]},
+                            "a_int_list2": {"L": [{"N": "4"}, {"N": "5"}, {"N": "6"}]},
+                        }
+                    },
+                }
+            },
+        },
+        simple_schema={
+            "a_list_of_struct": List(
+                Struct(
+                    {
+                        "a_str": String(),
+                        "a_int": Integer(),
+                    }
+                )
+            ),
+            "a_list_of_list_of_struct": List(
+                List(
+                    Struct(
+                        {
+                            "a_str": String(),
+                            "a_int": Integer(),
+                        }
+                    )
+                )
+            ),
+            "a_struct_of_list": Struct(
+                {
+                    "a_str_list": List(String()),
+                    "a_int_list": List(Integer()),
+                }
+            ),
+            "a_struct_of_struct_of_list": Struct(
+                {
+                    "struct_1": Struct(
+                        {
+                            "a_str_list1": List(String()),
+                            "a_int_list1": List(Integer()),
+                        }
+                    ),
+                    "struct_2": Struct(
+                        {
+                            "a_str_list2": List(String()),
+                            "a_int_list2": List(Integer()),
+                        }
+                    ),
+                }
+            ),
+        },
+    )
+
+    case12 = Case(
+        item={
+            "id": "id-1",
+            "a_str": "alice",
+            "a_int": 123,
+            "a_float": 3.14,
+            "a_binary": b"hello",
+            "a_bool": False,
+            "a_null": None,
+            "a_str_set": ["a", "b", "c"],
+            "a_int_set": [1, 2, 3],
+            "a_float_set": [1.1, 2.2, 3.3],
+            "a_binary_set": [b"hello", b"world"],
+            "a_str_list": ["a", "b", "c"],
+            "a_int_list": [1, 2, 3],
+            "a_float_list": [1.1, 2.2, 3.3],
+            "a_binary_list": [b"hello", b"world"],
+            "a_struct": {
+                "a_str": "alice",
+                "a_int": 123,
+                "a_float": 3.14,
+                "a_binary": b"hello",
+                "a_bool": False,
+                "a_null": None,
+            },
+            "a_list_of_struct": [
+                {"a_int": 123, "a_str": "alice"},
+                {"a_int": 456, "a_str": "bob"},
+            ],
+            "a_list_of_list_of_struct": [
+                [
+                    {"a_int": 123, "a_str": "alice"},
+                    {"a_int": 456, "a_str": "bob"},
+                ],
+                [
+                    {"a_int": 789, "a_str": "cathy"},
+                    {"a_int": 101112, "a_str": "david"},
+                ],
+            ],
+            "a_struct_of_list": {
+                "a_str_list": ["a", "b", "c"],
+                "a_int_list": [1, 2, 3],
+            },
+            "a_struct_of_struct_of_list": {
+                "struct_1": {
+                    "a_str_list1": ["a", "b", "c"],
+                    "a_int_list1": [1, 2, 3],
+                },
+                "struct_2": {
+                    "a_str_list2": ["d", "e", "f"],
+                    "a_int_list2": [4, 5, 6],
+                },
+            },
+            "a_list_of_super_complicate_struct": [
+                {
+                    "id": "id-1",
+                    "a_str": "alice",
+                    "a_int": 123,
+                    "a_float": 3.14,
+                    "a_binary": b"hello",
+                    "a_bool": False,
+                    "a_null": None,
+                    "a_str_set": ["a", "b", "c"],
+                    "a_int_set": [1, 2, 3],
+                    "a_float_set": [1.1, 2.2, 3.3],
+                    "a_binary_set": [b"hello", b"world"],
+                    "a_str_list": ["a", "b", "c"],
+                    "a_int_list": [1, 2, 3],
+                    "a_float_list": [1.1, 2.2, 3.3],
+                    "a_binary_list": [b"hello", b"world"],
+                    "a_struct": {
+                        "a_str": "alice",
+                        "a_int": 123,
+                        "a_float": 3.14,
+                        "a_binary": b"hello",
+                        "a_bool": False,
+                        "a_null": None,
+                    },
+                    "a_list_of_struct": [
+                        {"a_int": 123, "a_str": "alice"},
+                        {"a_int": 456, "a_str": "bob"},
+                    ],
+                    "a_list_of_list_of_struct": [
+                        [
+                            {"a_int": 123, "a_str": "alice"},
+                            {"a_int": 456, "a_str": "bob"},
+                        ],
+                        [
+                            {"a_int": 789, "a_str": "cathy"},
+                            {"a_int": 101112, "a_str": "david"},
+                        ],
+                    ],
+                    "a_struct_of_list": {
+                        "a_str_list": ["a", "b", "c"],
+                        "a_int_list": [1, 2, 3],
+                    },
+                    "a_struct_of_struct_of_list": {
+                        "struct_1": {
+                            "a_str_list1": ["a", "b", "c"],
+                            "a_int_list1": [1, 2, 3],
+                        },
+                        "struct_2": {
+                            "a_str_list2": ["d", "e", "f"],
+                            "a_int_list2": [4, 5, 6],
+                        },
+                    },
+                },
+            ],
+        },
+        json={
+            "id": {"S": "id-1"},
+            "a_str": {"S": "alice"},
+            "a_int": {"N": "123"},
+            "a_float": {"N": "3.14"},
+            "a_binary": {"B": "aGVsbG8="},
+            "a_bool": {"BOOL": False},
+            "a_null": {"NULL": True},
+            "a_str_set": {"SS": ["a", "b", "c"]},
+            "a_int_set": {"NS": ["1", "2", "3"]},
+            "a_float_set": {"NS": ["1.1", "2.2", "3.3"]},
+            "a_binary_set": {"BS": ["aGVsbG8=", "d29ybGQ="]},
+            "a_str_list": {"L": [{"S": "a"}, {"S": "b"}, {"S": "c"}]},
+            "a_int_list": {"L": [{"N": "1"}, {"N": "2"}, {"N": "3"}]},
+            "a_float_list": {"L": [{"N": "1.1"}, {"N": "2.2"}, {"N": "3.3"}]},
+            "a_binary_list": {"L": [{"B": "aGVsbG8="}, {"B": "d29ybGQ="}]},
+            "a_struct": {
+                "M": {
+                    "a_str": {"S": "alice"},
+                    "a_int": {"N": "123"},
+                    "a_float": {"N": "3.14"},
+                    "a_binary": {"B": "aGVsbG8="},
+                    "a_bool": {"BOOL": False},
+                    "a_null": {"NULL": True},
+                }
+            },
+            "a_list_of_struct": {
+                "L": [
+                    {"M": {"a_int": {"N": "123"}, "a_str": {"S": "alice"}}},
+                    {"M": {"a_int": {"N": "456"}, "a_str": {"S": "bob"}}},
+                ]
+            },
+            "a_list_of_list_of_struct": {
+                "L": [
+                    {
+                        "L": [
+                            {"M": {"a_int": {"N": "123"}, "a_str": {"S": "alice"}}},
+                            {"M": {"a_int": {"N": "456"}, "a_str": {"S": "bob"}}},
+                        ]
+                    },
+                    {
+                        "L": [
+                            {"M": {"a_int": {"N": "789"}, "a_str": {"S": "cathy"}}},
+                            {"M": {"a_int": {"N": "101112"}, "a_str": {"S": "david"}}},
+                        ]
+                    },
+                ],
+            },
+            "a_struct_of_list": {
+                "M": {
+                    "a_str_list": {"L": [{"S": "a"}, {"S": "b"}, {"S": "c"}]},
+                    "a_int_list": {"L": [{"N": "1"}, {"N": "2"}, {"N": "3"}]},
+                }
+            },
+            "a_struct_of_struct_of_list": {
+                "M": {
+                    "struct_1": {
+                        "M": {
+                            "a_str_list1": {"L": [{"S": "a"}, {"S": "b"}, {"S": "c"}]},
+                            "a_int_list1": {"L": [{"N": "1"}, {"N": "2"}, {"N": "3"}]},
+                        }
+                    },
+                    "struct_2": {
+                        "M": {
+                            "a_str_list2": {"L": [{"S": "d"}, {"S": "e"}, {"S": "f"}]},
+                            "a_int_list2": {"L": [{"N": "4"}, {"N": "5"}, {"N": "6"}]},
+                        }
+                    },
+                }
+            },
+            "a_list_of_super_complicate_struct": {
+                "L": [
+                    {
+                        "M": {
+                            "id": {"S": "id-1"},
+                            "a_str": {"S": "alice"},
+                            "a_int": {"N": "123"},
+                            "a_float": {"N": "3.14"},
+                            "a_binary": {"B": "aGVsbG8="},
+                            "a_bool": {"BOOL": False},
+                            "a_null": {"NULL": True},
+                            "a_str_set": {"SS": ["a", "b", "c"]},
+                            "a_int_set": {"NS": ["1", "2", "3"]},
+                            "a_float_set": {"NS": ["1.1", "2.2", "3.3"]},
+                            "a_binary_set": {"BS": ["aGVsbG8=", "d29ybGQ="]},
+                            "a_str_list": {"L": [{"S": "a"}, {"S": "b"}, {"S": "c"}]},
+                            "a_int_list": {"L": [{"N": "1"}, {"N": "2"}, {"N": "3"}]},
+                            "a_float_list": {
+                                "L": [{"N": "1.1"}, {"N": "2.2"}, {"N": "3.3"}]
+                            },
+                            "a_binary_list": {
+                                "L": [{"B": "aGVsbG8="}, {"B": "d29ybGQ="}]
+                            },
+                            "a_struct": {
+                                "M": {
+                                    "a_binary": {"B": "aGVsbG8="},
+                                    "a_bool": {"BOOL": False},
+                                    "a_float": {"N": "3.14"},
+                                    "a_int": {"N": "123"},
+                                    "a_null": {"NULL": True},
+                                    "a_str": {"S": "alice"},
+                                }
+                            },
+                            "a_list_of_struct": {
+                                "L": [
+                                    {
+                                        "M": {
+                                            "a_int": {"N": "123"},
+                                            "a_str": {"S": "alice"},
+                                        }
+                                    },
+                                    {
+                                        "M": {
+                                            "a_int": {"N": "456"},
+                                            "a_str": {"S": "bob"},
+                                        }
+                                    },
+                                ]
+                            },
+                            "a_list_of_list_of_struct": {
+                                "L": [
+                                    {
+                                        "L": [
+                                            {
+                                                "M": {
+                                                    "a_int": {"N": "123"},
+                                                    "a_str": {"S": "alice"},
+                                                }
+                                            },
+                                            {
+                                                "M": {
+                                                    "a_int": {"N": "456"},
+                                                    "a_str": {"S": "bob"},
+                                                }
+                                            },
+                                        ]
+                                    },
+                                    {
+                                        "L": [
+                                            {
+                                                "M": {
+                                                    "a_int": {"N": "789"},
+                                                    "a_str": {"S": "cathy"},
+                                                }
+                                            },
+                                            {
+                                                "M": {
+                                                    "a_int": {"N": "101112"},
+                                                    "a_str": {"S": "david"},
+                                                }
+                                            },
+                                        ]
+                                    },
+                                ],
+                            },
+                            "a_struct_of_list": {
+                                "M": {
+                                    "a_str_list": {
+                                        "L": [{"S": "a"}, {"S": "b"}, {"S": "c"}]
+                                    },
+                                    "a_int_list": {
+                                        "L": [{"N": "1"}, {"N": "2"}, {"N": "3"}]
+                                    },
+                                }
+                            },
+                            "a_struct_of_struct_of_list": {
+                                "M": {
+                                    "struct_1": {
+                                        "M": {
+                                            "a_str_list1": {
+                                                "L": [
+                                                    {"S": "a"},
+                                                    {"S": "b"},
+                                                    {"S": "c"},
+                                                ]
+                                            },
+                                            "a_int_list1": {
+                                                "L": [
+                                                    {"N": "1"},
+                                                    {"N": "2"},
+                                                    {"N": "3"},
+                                                ]
+                                            },
+                                        }
+                                    },
+                                    "struct_2": {
+                                        "M": {
+                                            "a_str_list2": {
+                                                "L": [
+                                                    {"S": "d"},
+                                                    {"S": "e"},
+                                                    {"S": "f"},
+                                                ]
+                                            },
+                                            "a_int_list2": {
+                                                "L": [
+                                                    {"N": "4"},
+                                                    {"N": "5"},
+                                                    {"N": "6"},
+                                                ]
+                                            },
+                                        }
+                                    },
+                                }
+                            },
+                        }
+                    }
+                ]
+            },
+        },
+        simple_schema={
+            "id": String(),
+            "a_str": String(),
+            "a_int": Integer(),
+            "a_float": Float(),
+            "a_binary": Binary(),
+            "a_bool": Bool(),
+            "a_null": Null(),
+            "a_str_set": Set(String()),
+            "a_int_set": Set(Integer()),
+            "a_float_set": Set(Float()),
+            "a_binary_set": Set(Binary()),
+            "a_str_list": List(String()),
+            "a_int_list": List(Integer()),
+            "a_float_list": List(Float()),
+            "a_binary_list": List(Binary()),
+            "a_struct": Struct(
+                {
+                    "a_str": String(),
+                    "a_int": Integer(),
+                    "a_float": Float(),
+                    "a_binary": Binary(),
+                    "a_bool": Bool(),
+                    "a_null": Null(),
+                }
+            ),
+            "a_list_of_struct": List(
+                Struct(
+                    {
+                        "a_str": String(),
+                        "a_int": Integer(),
+                    }
+                )
+            ),
+            "a_list_of_list_of_struct": List(
+                List(
+                    Struct(
+                        {
+                            "a_str": String(),
+                            "a_int": Integer(),
+                        }
+                    )
+                )
+            ),
+            "a_struct_of_list": Struct(
+                {
+                    "a_str_list": List(String()),
+                    "a_int_list": List(Integer()),
+                }
+            ),
+            "a_struct_of_struct_of_list": Struct(
+                {
+                    "struct_1": Struct(
+                        {
+                            "a_str_list1": List(String()),
+                            "a_int_list1": List(Integer()),
+                        }
+                    ),
+                    "struct_2": Struct(
+                        {
+                            "a_str_list2": List(String()),
+                            "a_int_list2": List(Integer()),
+                        }
+                    ),
+                }
+            ),
+            "a_list_of_super_complicate_struct": List(
+                Struct(
+                    {
+                        "id": String(),
+                        "a_str": String(),
+                        "a_int": Integer(),
+                        "a_float": Float(),
+                        "a_binary": Binary(),
+                        "a_bool": Bool(),
+                        "a_null": Null(),
+                        "a_str_set": Set(String()),
+                        "a_int_set": Set(Integer()),
+                        "a_float_set": Set(Float()),
+                        "a_binary_set": Set(Binary()),
+                        "a_str_list": List(String()),
+                        "a_int_list": List(Integer()),
+                        "a_float_list": List(Float()),
+                        "a_binary_list": List(Binary()),
+                        "a_struct": Struct(
+                            {
+                                "a_str": String(),
+                                "a_int": Integer(),
+                                "a_float": Float(),
+                                "a_binary": Binary(),
+                                "a_bool": Bool(),
+                                "a_null": Null(),
+                            }
+                        ),
+                        "a_list_of_struct": List(
+                            Struct(
+                                {
+                                    "a_str": String(),
+                                    "a_int": Integer(),
+                                }
+                            )
+                        ),
+                        "a_list_of_list_of_struct": List(
+                            List(
+                                Struct(
+                                    {
+                                        "a_str": String(),
+                                        "a_int": Integer(),
+                                    }
+                                )
+                            )
+                        ),
+                        "a_struct_of_list": Struct(
+                            {
+                                "a_str_list": List(String()),
+                                "a_int_list": List(Integer()),
+                            }
+                        ),
+                        "a_struct_of_struct_of_list": Struct(
+                            {
+                                "struct_1": Struct(
+                                    {
+                                        "a_str_list1": List(String()),
+                                        "a_int_list1": List(Integer()),
+                                    }
+                                ),
+                                "struct_2": Struct(
+                                    {
+                                        "a_str_list2": List(String()),
+                                        "a_int_list2": List(Integer()),
+                                    }
+                                ),
+                            }
+                        ),
+                    }
+                )
+            ),
         },
     )
 
