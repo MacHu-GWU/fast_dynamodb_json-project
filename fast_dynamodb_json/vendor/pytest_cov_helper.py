@@ -126,6 +126,7 @@ def run_cov_test(
         module = module[:-3]
     args = [
         f"{bin_pytest}",
+        "-vv",
         "-s",
         "--tb=native",
         f"--rootdir={root_dir}",

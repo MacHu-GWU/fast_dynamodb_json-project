@@ -15,7 +15,7 @@ from fast_dynamodb_json.schema import (
 
 
 def test():
-    assert Struct(
+    simple_type = Struct(
         {
             "a_int": Integer(),
             "a_float": Float(),
@@ -24,7 +24,8 @@ def test():
             "a_bool": Bool(),
             "a_null": Null(),
         }
-    ).to_polars() == pl.Struct(
+    )
+    assert simple_type.to_polars() == pl.Struct(
         {
             "a_int": pl.Int64(),
             "a_float": pl.Float64(),
@@ -32,6 +33,20 @@ def test():
             "a_bin": pl.Binary(),
             "a_bool": pl.Boolean(),
             "a_null": pl.Null(),
+        }
+    )
+    assert simple_type.to_dynamodb_json_polars() == pl.Struct(
+        {
+            "M": pl.Struct(
+                {
+                    "a_int": pl.Struct({"N": pl.Utf8()}),
+                    "a_float": pl.Struct({"N": pl.Utf8()}),
+                    "a_str": pl.Struct({"S": pl.Utf8()}),
+                    "a_bin": pl.Struct({"B": pl.Utf8()}),
+                    "a_bool": pl.Struct({"BOOL": pl.Boolean()}),
+                    "a_null": pl.Struct({"NULL": pl.Boolean()}),
+                }
+            )
         }
     )
 
@@ -46,15 +61,45 @@ def test():
     assert Set(Float()).to_polars() == pl.List(pl.Float64())
     assert Set(String()).to_polars() == pl.List(pl.Utf8())
     assert Set(Binary()).to_polars() == pl.List(pl.Binary())
-    assert Set(Bool()).to_polars() == pl.List(pl.Boolean())
-    assert Set(Null()).to_polars() == pl.List(pl.Null())
+
+    assert List(Integer()).to_dynamodb_json_polars() == pl.Struct(
+        {"L": pl.List(pl.Struct({"N": pl.Utf8()}))}
+    )
+    assert List(Float()).to_dynamodb_json_polars() == pl.Struct(
+        {"L": pl.List(pl.Struct({"N": pl.Utf8()}))}
+    )
+    assert List(String()).to_dynamodb_json_polars() == pl.Struct(
+        {"L": pl.List(pl.Struct({"S": pl.Utf8()}))}
+    )
+    assert List(Binary()).to_dynamodb_json_polars() == pl.Struct(
+        {"L": pl.List(pl.Struct({"B": pl.Utf8()}))}
+    )
+    assert List(Bool()).to_dynamodb_json_polars() == pl.Struct(
+        {"L": pl.List(pl.Struct({"BOOL": pl.Boolean()}))}
+    )
+    assert List(Null()).to_dynamodb_json_polars() == pl.Struct(
+        {"L": pl.List(pl.Struct({"NULL": pl.Boolean()}))}
+    )
+
+    assert Set(Integer()).to_dynamodb_json_polars() == pl.Struct(
+        {"NS": pl.List(pl.Utf8())}
+    )
+    assert Set(Float()).to_dynamodb_json_polars() == pl.Struct(
+        {"NS": pl.List(pl.Utf8())}
+    )
+    assert Set(String()).to_dynamodb_json_polars() == pl.Struct(
+        {"SS": pl.List(pl.Utf8())}
+    )
+    assert Set(Binary()).to_dynamodb_json_polars() == pl.Struct(
+        {"BS": pl.List(pl.Utf8())}
+    )
 
     # fmt: off
     assert List(List(Integer())).to_polars() == pl.List(pl.List(pl.Int64()))
     assert List(List(List(Integer()))).to_polars() == pl.List(pl.List(pl.List(pl.Int64())))
     # fmt: on
 
-    assert Struct(
+    simple_type = Struct(
         {
             "a_list": List(Integer()),
             "a_set": Set(String()),
@@ -73,7 +118,8 @@ def test():
                 },
             ),
         },
-    ).to_polars() == pl.Struct(
+    )
+    assert simple_type.to_polars() == pl.Struct(
         {
             "a_list": pl.List(pl.Int64()),
             "a_set": pl.List(pl.Utf8()),
@@ -92,6 +138,56 @@ def test():
                 },
             ),
         },
+    )
+    assert simple_type.to_dynamodb_json_polars() == pl.Struct(
+        {
+            "M": pl.Struct(
+                {
+                    "a_list": pl.Struct(
+                        {
+                            "L": pl.List(
+                                pl.Struct({"N": pl.Utf8()}),
+                            )
+                        }
+                    ),
+                    "a_set": pl.Struct({"SS": pl.List(pl.Utf8())}),
+                    "a_struct": pl.Struct(
+                        {
+                            "M": pl.Struct(
+                                {
+                                    "a_float": pl.Struct({"N": pl.Utf8()}),
+                                    "a_bin": pl.Struct({"B": pl.Utf8()}),
+                                    "a_list": pl.Struct(
+                                        {
+                                            "L": pl.List(
+                                                pl.Struct(
+                                                    {
+                                                        "M": pl.Struct(
+                                                            {
+                                                                "a_bool": pl.Struct(
+                                                                    {
+                                                                        "BOOL": pl.Boolean()
+                                                                    }
+                                                                ),
+                                                                "a_null": pl.Struct(
+                                                                    {
+                                                                        "NULL": pl.Boolean()
+                                                                    }
+                                                                ),
+                                                            }
+                                                        )
+                                                    }
+                                                ),
+                                            )
+                                        }
+                                    ),
+                                }
+                            )
+                        },
+                    ),
+                },
+            )
+        }
     )
 
 
