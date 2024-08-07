@@ -5,13 +5,14 @@ import dataclasses
 
 import polars as pl
 
+from .sentinel import NOTHING
+
 if T.TYPE_CHECKING:  # pragma: no cover
     from .typehint import T_SIMPLE_SCHEMA, T_POLARS_SCHEMA
 
 
 @dataclasses.dataclass
 class BaseType:
-
     def to_polars(self) -> T.Union[
         pl.Int64,
         pl.Float64,
@@ -33,6 +34,8 @@ DATA_TYPE = T.TypeVar("DATA_TYPE", bound=BaseType)
 
 @dataclasses.dataclass
 class Integer(BaseType):
+    default_for_null: T.Any = dataclasses.field(default=NOTHING)
+
     def to_polars(self) -> pl.Int64:
         return pl.Int64()
 
@@ -42,6 +45,8 @@ class Integer(BaseType):
 
 @dataclasses.dataclass
 class Float(BaseType):
+    default_for_null: T.Any = dataclasses.field(default=NOTHING)
+
     def to_polars(self) -> pl.Float64:
         return pl.Float64()
 
@@ -49,8 +54,14 @@ class Float(BaseType):
         return pl.Struct({"N": pl.Utf8()})
 
 
+DEFAULT_NULL_STRING = ""
+DEFAULT_NULL_BINARY = b""
+
+
 @dataclasses.dataclass
 class String(BaseType):
+    default_for_null: T.Any = dataclasses.field(default=DEFAULT_NULL_STRING)
+
     def to_polars(self) -> pl.Utf8:
         return pl.Utf8()
 
@@ -60,6 +71,8 @@ class String(BaseType):
 
 @dataclasses.dataclass
 class Binary(BaseType):
+    default_for_null: T.Any = dataclasses.field(default=DEFAULT_NULL_BINARY)
+
     def to_polars(self) -> pl.Binary:
         return pl.Binary()
 
@@ -69,6 +82,8 @@ class Binary(BaseType):
 
 @dataclasses.dataclass
 class Bool(BaseType):
+    default_for_null: T.Any = dataclasses.field(default=NOTHING)
+
     def to_polars(self) -> pl.Boolean:
         return pl.Boolean()
 
@@ -78,6 +93,8 @@ class Bool(BaseType):
 
 @dataclasses.dataclass
 class Null(BaseType):
+    default_for_null: T.Any = dataclasses.field(default=None)
+
     def to_polars(self) -> pl.Null:
         return pl.Null()
 
@@ -91,7 +108,12 @@ class Set(BaseType):
     :param itype: The type of the elements in the set.
     """
 
-    itype: BaseType = dataclasses.field()
+    itype: BaseType = dataclasses.field(default=NOTHING)
+    default_for_null: T.Any = dataclasses.field(default_factory=list)
+
+    def __post_init__(self):
+        if self.itype is NOTHING:
+            raise ValueError("itype is required for Set")
 
     def to_polars(self) -> pl.List:
         return pl.List(self.itype.to_polars())
@@ -116,7 +138,12 @@ class List(BaseType):
     :param itype: The type of the elements in the list.
     """
 
-    itype: BaseType = dataclasses.field()
+    itype: BaseType = dataclasses.field(default=NOTHING)
+    default_for_null: T.Any = dataclasses.field(default_factory=list)
+
+    def __post_init__(self):
+        if self.itype is NOTHING:
+            raise ValueError("itype is required for List")
 
     def to_polars(self) -> pl.List:
         return pl.List(self.itype.to_polars())
@@ -131,7 +158,12 @@ class Struct(BaseType):
     :param types: The types of the fields in the struct.
     """
 
-    types: T.Dict[str, BaseType] = dataclasses.field()
+    types: T.Dict[str, BaseType] = dataclasses.field(default=NOTHING)
+    default_for_null: T.Any = dataclasses.field(default_factory=dict)
+
+    def __post_init__(self):
+        if self.types is NOTHING:
+            raise ValueError("types is required for Struct")
 
     def to_polars(self) -> pl.Struct:
         return pl.Struct({k: v.to_polars() for k, v in self.types.items()})
