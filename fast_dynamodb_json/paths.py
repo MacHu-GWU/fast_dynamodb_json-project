@@ -20,3 +20,9 @@ bin_pytest = dir_venv_bin / "pytest"
 dir_htmlcov = dir_project_root / "htmlcov"
 path_cov_index_html = dir_htmlcov / "index.html"
 dir_unit_test = dir_project_root / "tests"
+
+dir_tmp = dir_project_root / "tmp"
+if dir_tmp.exists() is False:
+    dir_tmp.mkdir()
+path_expected_json = dir_unit_test / "expected.json"
+path_result_json = dir_unit_test / "result.json"
