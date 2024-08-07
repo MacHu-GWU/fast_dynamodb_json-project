@@ -10,7 +10,9 @@ def test():
     # CaseEnum.case104.test_serialize()
     # CaseEnum.case105.test_serialize()
     # CaseEnum.case106.test_serialize()
-    CaseEnum.case107.test_serialize()
+    # CaseEnum.case107.test_serialize()
+    # CaseEnum.case108.test_serialize()
+    CaseEnum.case109.test_serialize()
 
 
 if __name__ == "__main__":

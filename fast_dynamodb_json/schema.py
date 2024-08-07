@@ -159,7 +159,6 @@ class Struct(BaseType):
     """
 
     types: T.Dict[str, BaseType] = dataclasses.field(default=NOTHING)
-    default_for_null: T.Any = dataclasses.field(default_factory=dict)
 
     def __post_init__(self):
         if self.types is NOTHING:

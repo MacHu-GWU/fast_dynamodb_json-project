@@ -1111,6 +1111,36 @@ class CaseEnum:
 
     case105 = Case(
         item={
+            "a_struct": None,
+        },
+        json={
+            "a_struct": {
+                "M": {
+                    "a_int": {"N": "-999"},
+                    "a_float": {"N": "-999.999"},
+                    "a_str": {"S": "NA"},
+                    "a_bin": {"B": "TkE="},
+                    "a_bool": {"BOOL": False},
+                    "a_null": {"NULL": True},
+                },
+            }
+        },
+        simple_schema={
+            "a_struct": Struct(
+                {
+                    "a_int": Integer(default_for_null=-999),
+                    "a_float": Float(default_for_null=-999.999),
+                    "a_str": String(default_for_null="NA"),
+                    "a_bin": Binary(default_for_null=b"NA"),
+                    "a_bool": Bool(default_for_null=False),
+                    "a_null": Null(),
+                }
+            ),
+        },
+    )
+
+    case106 = Case(
+        item={
             "a_int_set": [1, 2, 3],
             "a_float_set": [1.1, 2.2, 3.3],
             "a_str_set": ["a", "b", "c"],
@@ -1148,7 +1178,7 @@ class CaseEnum:
         },
     )
 
-    case106 = Case(
+    case107 = Case(
         item={
             "a_int_set": [1, None, 3],
             "a_float_set": [1.1, None, 3.3],
@@ -1187,7 +1217,7 @@ class CaseEnum:
         },
     )
 
-    case107 = Case(
+    case108 = Case(
         item={
             "a_int_set": None,
             "a_float_set": None,
@@ -1223,6 +1253,127 @@ class CaseEnum:
             "a_binary_list": List(Binary(default_for_null=b"NA")),
             "a_bool_list": List(Bool(default_for_null=False)),
             "a_null_list": List(Null(default_for_null=None)),
+        },
+    )
+
+    case109 = Case(
+        item={
+            "a_list_of_struct": [
+                {"a_int": 123, "a_str": "alice"},
+                {"a_int": 456, "a_str": "bob"},
+            ],
+            "a_list_of_list_of_struct": [
+                [
+                    {"a_int": 123, "a_str": "alice"},
+                    {"a_int": 456, "a_str": "bob"},
+                ],
+                [
+                    {"a_int": 789, "a_str": "cathy"},
+                    {"a_int": 101112, "a_str": "david"},
+                ],
+            ],
+            "a_struct_of_list": {
+                "a_int_list": [1, 2, 3],
+                "a_str_list": ["a", "b", "c"],
+            },
+            "a_struct_of_struct_of_list": {
+                "struct_1": {
+                    "a_int_list1": [1, 2, 3],
+                    "a_str_list1": ["a", "b", "c"],
+                },
+                "struct_2": {
+                    "a_int_list2": [4, 5, 6],
+                    "a_str_list2": ["d", "e", "f"],
+                },
+            },
+        },
+        json={
+            "a_list_of_struct": {
+                "L": [
+                    {"M": {"a_int": {"N": "123"}, "a_str": {"S": "alice"}}},
+                    {"M": {"a_int": {"N": "456"}, "a_str": {"S": "bob"}}},
+                ]
+            },
+            "a_list_of_list_of_struct": {
+                "L": [
+                    {
+                        "L": [
+                            {"M": {"a_int": {"N": "123"}, "a_str": {"S": "alice"}}},
+                            {"M": {"a_int": {"N": "456"}, "a_str": {"S": "bob"}}},
+                        ]
+                    },
+                    {
+                        "L": [
+                            {"M": {"a_int": {"N": "789"}, "a_str": {"S": "cathy"}}},
+                            {"M": {"a_int": {"N": "101112"}, "a_str": {"S": "david"}}},
+                        ]
+                    },
+                ],
+            },
+            "a_struct_of_list": {
+                "M": {
+                    "a_int_list": {"L": [{"N": "1"}, {"N": "2"}, {"N": "3"}]},
+                    "a_str_list": {"L": [{"S": "a"}, {"S": "b"}, {"S": "c"}]},
+                }
+            },
+            "a_struct_of_struct_of_list": {
+                "M": {
+                    "struct_1": {
+                        "M": {
+                            "a_int_list1": {"L": [{"N": "1"}, {"N": "2"}, {"N": "3"}]},
+                            "a_str_list1": {"L": [{"S": "a"}, {"S": "b"}, {"S": "c"}]},
+                        }
+                    },
+                    "struct_2": {
+                        "M": {
+                            "a_int_list2": {"L": [{"N": "4"}, {"N": "5"}, {"N": "6"}]},
+                            "a_str_list2": {"L": [{"S": "d"}, {"S": "e"}, {"S": "f"}]},
+                        }
+                    },
+                }
+            },
+        },
+        simple_schema={
+            "a_list_of_struct": List(
+                Struct(
+                    {
+                        "a_int": Integer(default_for_null=-999),
+                        "a_str": String(default_for_null="NA"),
+                    }
+                )
+            ),
+            "a_list_of_list_of_struct": List(
+                List(
+                    Struct(
+                        {
+                            "a_int": Integer(default_for_null=-999),
+                            "a_str": String(default_for_null="NA"),
+                        }
+                    )
+                )
+            ),
+            "a_struct_of_list": Struct(
+                {
+                    "a_int_list": List(Integer(default_for_null=-999)),
+                    "a_str_list": List(String(default_for_null="NA")),
+                }
+            ),
+            "a_struct_of_struct_of_list": Struct(
+                {
+                    "struct_1": Struct(
+                        {
+                            "a_int_list1": List(Integer(default_for_null=-999)),
+                            "a_str_list1": List(String(default_for_null="NA")),
+                        }
+                    ),
+                    "struct_2": Struct(
+                        {
+                            "a_int_list2": List(Integer(default_for_null=-999)),
+                            "a_str_list2": List(String(default_for_null="NA")),
+                        }
+                    ),
+                }
+            ),
         },
     )
 

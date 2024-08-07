@@ -33,6 +33,12 @@ def get_selector(
     is_set: bool = False,
     is_list: bool = False,
 ) -> T.Optional[pl.Expr]:
+    # print(f"{name = }") # for debug only
+    # print(f"{dtype = }") # for debug only
+    # print(f"{node = }") # for debug only
+    # print(f"{is_set = }") # for debug only
+    # print(f"{is_list = }") # for debug only
+
     # fmt: off
     if isinstance(dtype, Integer):
         if is_set:
@@ -111,7 +117,7 @@ def get_selector(
             field = "BS"
         else:# pragma: no cover
             raise NotImplementedError
-        expr = get_selector(name=None, dtype=dtype.itype, node=None, is_set=True)
+        expr = get_selector(name=None, dtype=dtype.itype, node=pl.element(), is_set=True)
         final_expr = pl.struct(
             node.fill_null(dtype.default_for_null).list.eval(expr).alias(field)
         )
@@ -123,7 +129,7 @@ def get_selector(
     # List
     # --------------------------------------------------------------------------
     elif isinstance(dtype, List):
-        expr = get_selector(name=None, dtype=dtype.itype, node=None, is_list=True)
+        expr = get_selector(name=None, dtype=dtype.itype, node=pl.element(), is_list=True)
         final_expr = pl.struct(
             node.fill_null(dtype.default_for_null).list.eval(expr).alias("L")
         )
@@ -156,36 +162,17 @@ def serialize_df(
     data_col: str = "Data",
 ) -> pl.DataFrame:
     selectors = []
-    names = []
-
-    # exprs = []
-    # for name, dtype in simple_schema.items():
-    #     if isinstance(dtype, (Integer, Float, String, Binary, Bool, Null)):
-    #         expr = pl.col(data_col).struct.field(name).fill_null(value=pl.lit(dtype.default_for_null))
-    #         exprs.append(expr)
-    #     else:
-    #         pass
-    #
-    # if len(exprs):
-    #     df = df.with_columns(
-    #         pl.struct(
-    #             *exprs
-    #         ).alias(data_col)
-    #     )
 
     for name, dtype in simple_schema.items():
+        print(f"--- expr of field({name!r}) ---")
         selector = get_selector(
             name=name,
             dtype=dtype,
             node=pl.col(data_col).struct.field(name),
         )
+        print(selector)
         if selector is not None:
             selectors.append(selector)
-            names.append(name)
-
-    for name, selector in zip(names, selectors):
-        print(f"--- expr of field({name!r}) ---")
-        print(selector)
 
     return df.with_columns(*selectors).drop(data_col)
 
