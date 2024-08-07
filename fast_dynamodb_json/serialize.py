@@ -164,13 +164,13 @@ def serialize_df(
     selectors = []
 
     for name, dtype in simple_schema.items():
-        print(f"--- expr of field({name!r}) ---")
+        # print(f"--- expr of field({name!r}) ---")
         selector = get_selector(
             name=name,
             dtype=dtype,
             node=pl.col(data_col).struct.field(name),
         )
-        print(selector)
+        # print(selector)
         if selector is not None:
             selectors.append(selector)
 

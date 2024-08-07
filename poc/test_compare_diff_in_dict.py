@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from fast_dynamodb_json import api
-
+"""
+Demonstrate how to display dictionary difference in a human-readable format.
+"""
 
 def test():
     d1 = {

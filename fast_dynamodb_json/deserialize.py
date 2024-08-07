@@ -121,19 +121,14 @@ def deserialize_df(
     dynamodb_json_col: str = "Item",
 ) -> pl.DataFrame:
     selectors = []
-    names = []
     for name, t in simple_schema.items():
+        # print(f"--- expr of field({name!r}) ---")
         selector = get_selector(
             name, t, node=pl.col(dynamodb_json_col).struct.field(name)
         )
+        # print(selector)
         if selector is not None:
             selectors.append(selector)
-            names.append(name)
-
-    for name, selector in zip(names, selectors):
-        print(f"--- expr of field({name!r}) ---")
-        print(selector)
-
     return df.with_columns(*selectors).drop(dynamodb_json_col)
 
 
