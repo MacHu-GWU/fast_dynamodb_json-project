@@ -53,7 +53,7 @@ Welcome to ``fast_dynamodb_json`` Documentation
 .. image:: https://fast-dynamodb-json.readthedocs.io/en/latest/_static/fast_dynamodb_json-logo.png
     :target: https://fast-dynamodb-json.readthedocs.io/en/latest/
 
-AWS DynamoDB is a powerful NoSQL database service, but it comes with a unique challenge: its data is not stored in standard JSON format. Instead, DynamoDB encodes everything as strings. For example, a string "hello" is encoded as `{"S": "hello"}`, and a number 123 as `{"N": "123"}`. This encoding necessitates deserialization into regular Python dictionaries for data processing, which can be a significant bottleneck in high-volume operations.
+AWS DynamoDB is a powerful NoSQL database service, but it comes with a unique challenge: its data is not stored in standard JSON format. Instead, DynamoDB encodes everything as strings. For example, a string "hello" is encoded as ``{"S": "hello"}``, and a number 123 as ``{"N": "123"}``. This encoding necessitates deserialization into regular Python dictionaries for data processing, which can be a significant bottleneck in high-volume operations.
 
 Existing Python libraries like `pynamodb` and `dynamodb_json` offer solutions, but their implementations rely on Python for-loops and recursive programming. While functional, these approaches struggle with performance when handling large volumes of DynamoDB items. Moreover, their design doesn't lend itself well to vectorized computing or optimization through JIT technologies like PyPy or Numba.
 
