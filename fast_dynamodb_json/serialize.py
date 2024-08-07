@@ -36,36 +36,66 @@ def get_selector(
     # fmt: off
     if isinstance(dtype, Integer):
         if is_set:
-            return pl.element().cast(pl.Int64)
+            return pl.element().fill_null(dtype.default_for_null).cast(pl.Utf8())
         elif is_list:
-            return node.struct.field("N").cast(pl.Int64)
+            return pl.struct(
+                pl.element().fill_null(dtype.default_for_null).cast(pl.Utf8()).alias("N")
+            )
         else:
-            return pl.struct(node.fill_null(pl.lit(dtype.default_for_null)).cast(pl.Utf8).alias("N")).alias(name)
+            return pl.struct(
+                node.fill_null(dtype.default_for_null).cast(pl.Utf8).alias("N")
+            ).alias(name)
     elif isinstance(dtype, Float):
         if is_set:
-            return pl.element().cast(pl.Float64)
+            return pl.element().fill_null(dtype.default_for_null).cast(pl.Utf8())
         elif is_list:
-            return node.struct.field("N").cast(pl.Float64)
+            return pl.struct(
+                pl.element().fill_null(dtype.default_for_null).cast(pl.Utf8()).alias("N")
+            )
         else:
-            return pl.struct(node.fill_null(pl.lit(dtype.default_for_null)).cast(pl.Utf8).alias("N")).alias(name)
+            return pl.struct(
+                node.fill_null(pl.lit(dtype.default_for_null)).cast(pl.Utf8).alias("N")
+            ).alias(name)
     elif isinstance(dtype, String):
         if is_set:
-            return pl.element()
+            return pl.element().fill_null(dtype.default_for_null)
         elif is_list:
-            return node.struct.field("S")
+            return pl.struct(
+                pl.element().fill_null(dtype.default_for_null).alias("S")
+            )
         else:
-            return pl.struct(node.fill_null(pl.lit(dtype.default_for_null)).alias("S")).alias(name)
+            return pl.struct(
+                node.fill_null(pl.lit(dtype.default_for_null)).alias("S")
+            ).alias(name)
     elif isinstance(dtype, Binary):
         if is_set:
-            return pl.element().cast(pl.Binary).bin.decode("base64")
+            return pl.element().fill_null(dtype.default_for_null).bin.encode("base64").cast(pl.Utf8())
         elif is_list:
-            return node.struct.field("B").cast(pl.Binary).bin.decode("base64")
+            return pl.struct(
+                pl.element().fill_null(dtype.default_for_null).bin.encode("base64").cast(pl.Utf8).alias("B")
+            )
         else:
-            return pl.struct(node.fill_null(pl.lit(dtype.default_for_null)).bin.encode("base64").cast(pl.Utf8).alias("B")).alias(name)
+            return pl.struct(
+                node.fill_null(pl.lit(dtype.default_for_null)).bin.encode("base64").cast(pl.Utf8).alias("B")
+            ).alias(name)
     elif isinstance(dtype, Bool):
-        return pl.struct(node.fill_null(pl.lit(dtype.default_for_null)).alias("BOOL")).alias(name)
+        if is_list:
+            return pl.struct(
+                pl.element().fill_null(dtype.default_for_null).alias("BOOL")
+            )
+        else:
+            return pl.struct(
+                node.fill_null(pl.lit(dtype.default_for_null)).alias("BOOL")
+            ).alias(name)
     elif isinstance(dtype, Null):
-        return pl.struct(pl.lit(True).alias("NULL")).alias(name)
+        if is_list:
+            return pl.struct(
+                pl.element().fill_null(True).alias("NULL")
+            )
+        else:
+            return pl.struct(
+                pl.lit(True).alias("NULL")
+            ).alias(name)
 
     # --------------------------------------------------------------------------
     # Set
@@ -79,10 +109,12 @@ def get_selector(
             field = "NS"
         elif isinstance(dtype.itype, Binary):
             field = "BS"
-        else:
+        else:# pragma: no cover
             raise NotImplementedError
         expr = get_selector(name=None, dtype=dtype.itype, node=None, is_set=True)
-        final_expr = node.struct.field(field).list.eval(expr)
+        final_expr = pl.struct(
+            node.fill_null(dtype.default_for_null).list.eval(expr).alias(field)
+        )
         if name:
             final_expr = final_expr.alias(name)
         return final_expr
@@ -91,8 +123,10 @@ def get_selector(
     # List
     # --------------------------------------------------------------------------
     elif isinstance(dtype, List):
-        expr = get_selector(name=None, dtype=dtype.itype, node=pl.element(), is_list=True)
-        final_expr = pl.struct(node.fill_null(pl.lit(dtype.default_for_null)).list.eval(expr)).alias("L")
+        expr = get_selector(name=None, dtype=dtype.itype, node=None, is_list=True)
+        final_expr = pl.struct(
+            node.fill_null(dtype.default_for_null).list.eval(expr).alias("L")
+        )
         if name:
             final_expr = final_expr.alias(name)
         return final_expr
@@ -124,20 +158,20 @@ def serialize_df(
     selectors = []
     names = []
 
-    exprs = []
-    for name, dtype in simple_schema.items():
-        if isinstance(dtype, (Integer, Float, String, Binary, Bool, Null)):
-            expr = pl.col(data_col).struct.field(name).fill_null(value=pl.lit(dtype.default_for_null))
-            exprs.append(expr)
-        else:
-            pass
-
-    if len(exprs):
-        df = df.with_columns(
-            pl.struct(
-                *exprs
-            ).alias(data_col)
-        )
+    # exprs = []
+    # for name, dtype in simple_schema.items():
+    #     if isinstance(dtype, (Integer, Float, String, Binary, Bool, Null)):
+    #         expr = pl.col(data_col).struct.field(name).fill_null(value=pl.lit(dtype.default_for_null))
+    #         exprs.append(expr)
+    #     else:
+    #         pass
+    #
+    # if len(exprs):
+    #     df = df.with_columns(
+    #         pl.struct(
+    #             *exprs
+    #         ).alias(data_col)
+    #     )
 
     for name, dtype in simple_schema.items():
         selector = get_selector(
