@@ -3,3 +3,5 @@ pathlib_mate                            # autopep8 your code
 twine                                   # make distribution archive
 wheel                                   # make pre-compiled distribution package
 build                                   # build distribution package
+s3pathlib>=2.1.2,<3.0.0
+boto_session_manager>=1.7.2,<2.0.0
